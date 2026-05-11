@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solicitar orçamento — Yoh Maker</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  body { background: var(--bg); }
+
+  .quote-page {
+    padding-block: clamp(40px, 5vw, 72px) clamp(80px, 10vw, 140px);
+  }
+  .q-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 40px;
+    align-items: start;
+  }
+
+  /* progress bar */
+  .stepper {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 36px;
+  }
+  .stepper .dot {
+    flex: 1;
+    height: 6px;
+    background: var(--line);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+  }
+  .stepper .dot.done { background: var(--accent); }
+  .stepper .dot.active { background: var(--line); }
+  .stepper .dot.active::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: var(--accent);
+    border-radius: 999px;
+    animation: fillBar 0.6s ease forwards;
+    transform-origin: left;
+  }
+  @keyframes fillBar { from { transform: scaleX(0);} to { transform: scaleX(0.6);} }
+
+  .step-meta {
+    display: flex; justify-content: space-between; align-items: end;
+    margin-bottom: 28px;
+  }
+  .step-num {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .step-title {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.015em;
+    margin: 8px 0 12px;
+  }
+  .step-title .acc { color: var(--accent); font-style: italic; }
+  .step-sub {
+    color: var(--ink-soft);
+    max-width: 56ch;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  /* main panel */
+  .q-panel {
+    background: var(--paper);
+    border-radius: var(--r-xl);
+    border: 1px solid var(--line);
+    padding: clamp(28px, 4vw, 44px);
+    margin-top: 8px;
+  }
+
+  /* upload area */
+  .uploader {
+    border: 2px dashed var(--line);
+    background: var(--bg);
+    border-radius: var(--r-lg);
+    padding: 56px 32px;
+    text-align: center;
+    transition: all .2s;
+    cursor: pointer;
+  }
+  .uploader:hover, .uploader.drag {
+    border-color: var(--accent);
+    background: rgba(227,93,58,0.04);
+  }
+  .uploader .ico {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--paper);
+    display: grid; place-items: center;
+    margin: 0 auto 18px;
+    color: var(--accent);
+    box-shadow: var(--shadow-sm);
+  }
+  .uploader h4 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .uploader p {
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin-bottom: 18px;
+  }
+  .uploader .formats {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 14px;
+  }
+
+  /* alternative options */
+  .alt-options {
+    margin-top: 20px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+  .alt-options a { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; margin: 0 6px; }
+
+  /* file list */
+  .file-list { margin-top: 20px; }
+  .file-row {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--bg);
+    padding: 14px 18px;
+    border-radius: var(--r-md);
+    margin-bottom: 8px;
+  }
+  .file-row .file-ico {
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: white;
+    display: grid; place-items: center;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+  }
+  .file-row .file-info { flex: 1; min-width: 0; }
+  .file-row .file-info strong { display: block; font-size: 15px; }
+  .file-row .file-info span { font-size: 12px; color: var(--muted); }
+  .file-row .file-rm {
+    background: none; border: 0;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+  }
+  .file-row .file-rm:hover { color: var(--accent); background: rgba(227,93,58,0.1); }
+
+  /* describe textarea */
+  .field { margin-bottom: 20px; }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 8px;
+    letter-spacing: 0.01em;
+  }
+  .field label .opt { color: var(--muted); font-weight: 400; margin-left: 4px; }
+  .field input[type="text"], .field input[type="email"], .field input[type="number"], .field textarea, .field select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--bg);
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--ink);
+    transition: border-color .15s;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--paper);
+  }
+  .field textarea { resize: vertical; min-height: 120px; line-height: 1.5; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* material picker */
+  .mat-picker {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .mat-pick {
+    border: 2px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 18px 14px;
+    background: var(--paper);
+    cursor: pointer;
+    text-align: center;
+    transition: all .18s;
+    font-family: inherit;
+  }
+  .mat-pick:hover { border-color: var(--ink-soft); }
+  .mat-pick.selected {
+    border-color: var(--accent);
+    background: rgba(227,93,58,0.05);
+  }
+  .mat-pick .swatch {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    margin: 0 auto 12px;
+    box-shadow: inset 0 -6px 12px rgba(0,0,0,0.2), inset 0 4px 8px rgba(255,255,255,0.4);
+  }
+  .mat-pick strong {
+    display: block;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .mat-pick span {
+    display: block;
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* finish radio cards */
+  .finish-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .finish-card {
+    border: 2px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 18px;
+    background: var(--paper);
+    cursor: pointer;
+    transition: all .18s;
+  }
+  .finish-card:hover { border-color: var(--ink-soft); }
+  .finish-card.selected {
+    border-color: var(--accent);
+    background: rgba(227,93,58,0.05);
+  }
+  .finish-card strong { font-size: 15px; display: block; margin-bottom: 4px; }
+  .finish-card span { font-size: 12px; color: var(--muted); }
+  .finish-card .price { font-family: var(--serif); font-size: 18px; color: var(--accent); margin-top: 8px; display: block; font-style: italic; }
+
+  /* sidebar — live quote */
+  .quote-side {
+    position: sticky;
+    top: 100px;
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: var(--r-xl);
+    padding: 32px;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .quote-side::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(400px 200px at 100% 0%, rgba(227,93,58,0.25), transparent 60%);
+    z-index: -1;
+  }
+  .quote-side .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(243,236,223,0.55);
+    margin-bottom: 8px;
+  }
+  .quote-side .live {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px;
+    background: rgba(255,255,255,0.06);
+    padding: 4px 10px;
+    border-radius: 999px;
+    color: var(--butter);
+    margin-bottom: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .quote-side .live .pulse {
+    width: 6px; height: 6px;
+    background: var(--butter);
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(244,207,107,0.6);
+    animation: pulse 1.6s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(244,207,107,0.7); }
+    70% { box-shadow: 0 0 0 8px rgba(244,207,107,0); }
+    100% { box-shadow: 0 0 0 0 rgba(244,207,107,0); }
+  }
+  .quote-side .total {
+    font-family: var(--serif);
+    font-size: 64px;
+    line-height: 1;
+    margin: 8px 0 4px;
+    color: var(--bg);
+  }
+  .quote-side .total .currency { font-size: 28px; vertical-align: top; opacity: 0.7; margin-right: 4px; }
+  .quote-side .estim {
+    font-size: 13px;
+    color: rgba(243,236,223,0.55);
+    margin-bottom: 24px;
+  }
+  .quote-side hr {
+    border: 0;
+    border-top: 1px dashed rgba(255,255,255,0.12);
+    margin: 20px 0;
+  }
+  .quote-side .breakdown {
+    list-style: none;
+    padding: 0; margin: 0;
+    display: grid; gap: 10px;
+    font-size: 14px;
+  }
+  .quote-side .breakdown li {
+    display: flex; justify-content: space-between;
+    color: rgba(243,236,223,0.78);
+  }
+  .quote-side .breakdown li strong {
+    font-weight: 500;
+    color: var(--bg);
+  }
+  .quote-side .breakdown li .em {
+    color: var(--muted);
+    font-style: italic;
+    font-family: var(--serif);
+    font-size: 13px;
+  }
+  .quote-side .turnaround {
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: var(--r-md);
+    background: rgba(255,255,255,0.05);
+    font-size: 13px;
+    color: rgba(243,236,223,0.78);
+    line-height: 1.5;
+  }
+  .quote-side .turnaround strong { color: var(--butter); display: block; font-size: 16px; font-family: var(--serif); margin-bottom: 4px; font-style: italic; }
+  .quote-side .small {
+    font-size: 12px;
+    color: rgba(243,236,223,0.5);
+    line-height: 1.5;
+    margin-top: 16px;
+    font-style: italic;
+  }
+
+  /* nav buttons */
+  .step-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 28px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+  }
+  .step-nav .back { background: transparent; color: var(--ink-soft); border: 0; cursor: pointer; padding: 14px 0; font-family: inherit; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+  .step-nav .back:hover { color: var(--ink); }
+
+  /* step view toggling */
+  .step-view { display: none; }
+  .step-view.active { display: block; }
+
+  /* qty */
+  .qty-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .qty-input {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--paper);
+    overflow: hidden;
+  }
+  .qty-input button {
+    width: 48px; height: 48px;
+    background: transparent;
+    border: 0;
+    font-size: 20px;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .qty-input button:hover { background: var(--bg); }
+  .qty-input input {
+    width: 80px; height: 48px;
+    border: 0;
+    text-align: center;
+    background: var(--paper);
+    font-family: var(--serif);
+    font-size: 24px;
+    color: var(--ink);
+  }
+  .qty-input input:focus { outline: none; }
+  .qty-row .savings {
+    font-size: 13px;
+    color: var(--sage);
+    background: var(--sage-soft);
+    padding: 8px 14px;
+    border-radius: 999px;
+  }
+  .qty-row .savings strong { font-style: italic; font-family: var(--serif); }
+
+  /* success */
+  .success-card {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .success-card .check {
+    width: 88px; height: 88px;
+    border-radius: 50%;
+    background: var(--sage-soft);
+    color: var(--sage);
+    display: grid; place-items: center;
+    margin: 0 auto 28px;
+  }
+  .success-card h2 {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+  .success-card h2 .acc { color: var(--accent); font-style: italic; }
+  .success-card p {
+    color: var(--ink-soft);
+    max-width: 50ch;
+    margin: 0 auto 28px;
+    font-size: 17px;
+  }
+  .success-summary {
+    background: var(--bg);
+    border-radius: var(--r-md);
+    padding: 24px;
+    text-align: left;
+    max-width: 480px;
+    margin: 0 auto 28px;
+  }
+  .success-summary .ref {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .success-summary ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; font-size: 14px; }
+  .success-summary li { display: flex; justify-content: space-between; }
+  .success-summary li span { color: var(--ink-soft); }
+  .success-summary li strong { font-weight: 500; }
+
+  @media (max-width: 980px) {
+    .q-grid { grid-template-columns: 1fr; }
+    .quote-side { position: static; }
+    .mat-picker { grid-template-columns: repeat(2, 1fr); }
+    .finish-grid { grid-template-columns: 1fr; }
+    .field-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- =================== TOP NAV =================== -->
+<nav class="topnav">
+  <div class="inner">
+    <a href="index.html" class="brand">
+      <img src="assets/yoh-maker-logo-horiz.png" alt="Yoh Maker">
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Início</a>
+      <a href="portfolio.html">Portfólio</a>
+      <a href="quote.html" class="active">Como funciona</a>
+      <a href="about.html">Sobre</a>
+    </div>
+    <div class="nav-cta">
+      <a href="mailto:contato@yohmaker.com.br" class="btn btn-ghost">Ou mande um e-mail</a>
+    </div>
+  </div>
+</nav>
+
+<main class="quote-page">
+  <div class="wrap">
+
+    <!-- header -->
+    <div style="margin-bottom: 36px;">
+      <span class="eyebrow">Solicitar orçamento</span>
+      <h1 style="font-size: clamp(48px, 6vw, 88px); margin-top: 14px; line-height: 0.98;">Conta sobre<br>seu <span class="serif italic" style="color: var(--accent);">projeto.</span></h1>
+      <p class="lede" style="margin-top: 20px;">Quatro passos curtos. Em até 24 horas você recebe um orçamento amigável, feito por uma pessoa de verdade &mdash; quase sempre bem antes.</p>
+    </div>
+
+    <!-- two-column layout -->
+    <div class="q-grid">
+      <div>
+        <!-- progress -->
+        <div class="stepper" id="stepper">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+
+        <!-- ============== STEP 1: about the project ============== -->
+        <div class="step-view active" data-step="1">
+          <div class="step-meta">
+            <div>
+              <div class="step-num">Etapa 01 de 04</div>
+              <h2 class="step-title">O que vamos <span class="acc">fazer?</span></h2>
+            </div>
+          </div>
+          <p class="step-sub" style="margin-bottom: 28px;">Envie um arquivo 3D se tiver &mdash; ou só descreva o que você quer. Os dois caminhos funcionam super bem.</p>
+
+          <div class="q-panel">
+            <!-- uploader -->
+            <div class="uploader" id="uploader">
+              <div class="ico">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+              </div>
+              <h4>Arraste um arquivo aqui</h4>
+              <p>ou clique para escolher do seu computador</p>
+              <button class="btn btn-light" type="button" onclick="addSampleFile(event)">Escolher arquivo</button>
+              <div class="formats">.stl &middot; .obj &middot; .step &middot; .3mf &middot; .gltf</div>
+            </div>
+
+            <div class="file-list" id="fileList"></div>
+
+            <div class="alt-options">
+              Sem arquivo ainda? <a href="#" onclick="event.preventDefault(); document.getElementById('describe').focus();">Descreva pra gente</a> ou <a href="mailto:contato@yohmaker.com.br">envie um rascunho por e-mail</a>
+            </div>
+
+            <hr style="border: 0; border-top: 1px dashed var(--line); margin: 32px 0;">
+
+            <div class="field">
+              <label>Nome do projeto <span class="opt">— um apelido carinhoso</span></label>
+              <input type="text" placeholder="ex.: Botões de reposição para rádio antigo" value="">
+            </div>
+
+            <div class="field">
+              <label for="describe">Descreva o que você tem em mente <span class="opt">— opcional, se já enviou um arquivo</span></label>
+              <textarea id="describe" placeholder="Conta um pouquinho. Pra que serve? Qual o tamanho aproximado? Tem alguma referência?"></textarea>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label>Tamanho aproximado</label>
+                <select>
+                  <option>Pequeno (cabe na palma da mão)</option>
+                  <option>Médio (caixa de sapato)</option>
+                  <option>Grande (micro-ondas)</option>
+                  <option>Ainda não sei</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Uso</label>
+                <select id="useCase">
+                  <option>Decorativo / peça de arte</option>
+                  <option>Funcional / uso diário</option>
+                  <option>Protótipo / engenharia</option>
+                  <option>Peça de reposição</option>
+                  <option>Miniatura / display</option>
+                  <option>Outro</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-nav">
+            <button class="back" disabled style="opacity: 0.3;">&larr; Voltar</button>
+            <button class="btn btn-accent btn-arrow" onclick="goStep(2)">Próximo: escolher material</button>
+          </div>
+        </div>
+
+        <!-- ============== STEP 2: material ============== -->
+        <div class="step-view" data-step="2">
+          <div class="step-meta">
+            <div>
+              <div class="step-num">Etapa 02 de 04</div>
+              <h2 class="step-title">Escolha um <span class="acc">material.</span></h2>
+            </div>
+          </div>
+          <p class="step-sub" style="margin-bottom: 28px;">Na dúvida? Escolha o que parecer mais próximo &mdash; se houver opção melhor, indicamos no seu orçamento.</p>
+
+          <div class="q-panel">
+            <h4 style="font-family: var(--sans); font-size: 13px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 16px;">Material</h4>
+            <div class="mat-picker" id="matPicker">
+              <button type="button" class="mat-pick selected" data-mat="PLA" data-mult="1">
+                <div class="swatch" style="background: #e35d3a;"></div>
+                <strong>PLA</strong>
+                <span>Fácil &middot; Uso interno</span>
+              </button>
+              <button type="button" class="mat-pick" data-mat="PETG" data-mult="1.25">
+                <div class="swatch" style="background: #3a5a45;"></div>
+                <strong>PETG</strong>
+                <span>Resistente &middot; Externo</span>
+              </button>
+              <button type="button" class="mat-pick" data-mat="ABS" data-mult="1.4">
+                <div class="swatch" style="background: #8a8a8a;"></div>
+                <strong>ABS</strong>
+                <span>Forte &middot; Aguenta calor</span>
+              </button>
+              <button type="button" class="mat-pick" data-mat="TPU" data-mult="1.6">
+                <div class="swatch" style="background: #1c1814;"></div>
+                <strong>TPU</strong>
+                <span>Flexível &middot; Aderente</span>
+              </button>
+              <button type="button" class="mat-pick" data-mat="Resina" data-mult="2.1">
+                <div class="swatch" style="background: linear-gradient(135deg, #b88aa6, #5b3a4f);"></div>
+                <strong>Resina</strong>
+                <span>Detalhado &middot; Display</span>
+              </button>
+              <button type="button" class="mat-pick" data-mat="Madeira" data-mult="1.7">
+                <div class="swatch" style="background: #c9a880;"></div>
+                <strong>Madeira</strong>
+                <span>Especial</span>
+              </button>
+              <button type="button" class="mat-pick" data-mat="Metal" data-mult="2.4">
+                <div class="swatch" style="background: linear-gradient(135deg, #d8d8d8, #888);"></div>
+                <strong>Metal</strong>
+                <span>Especial</span>
+              </button>
+              <button type="button" class="mat-pick" data-mat="PLA Glow" data-mult="1.5">
+                <div class="swatch" style="background: linear-gradient(135deg, #8effc1, #21d181);"></div>
+                <strong>PLA Glow</strong>
+                <span>Especial</span>
+              </button>
+            </div>
+
+            <h4 style="font-family: var(--sans); font-size: 13px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin: 32px 0 16px;">Acabamento &amp; pós-processamento</h4>
+            <div class="finish-grid" id="finishGrid">
+              <button type="button" class="finish-card selected" data-finish="Como impresso" data-add="0">
+                <strong>Como impresso</strong>
+                <span>Direto da impressora, com linhas de camada visíveis</span>
+                <span class="price">Incluso</span>
+              </button>
+              <button type="button" class="finish-card" data-finish="Lixado" data-add="60">
+                <strong>Lixado</strong>
+                <span>Lixado à mão, pronto para pintar ou usar</span>
+                <span class="price">+R$ 60 / peça</span>
+              </button>
+              <button type="button" class="finish-card" data-finish="Pintado" data-add="140">
+                <strong>Pintado</strong>
+                <span>Com primer e pintura na cor que você escolher</span>
+                <span class="price">+R$ 140 / peça</span>
+              </button>
+            </div>
+
+            <div class="field" style="margin-top: 32px;">
+              <label>Cor personalizada <span class="opt">— opcional</span></label>
+              <input type="text" placeholder="ex.: Verde sálvia fosco. Pantone 5535, se você tiver.">
+            </div>
+          </div>
+
+          <div class="step-nav">
+            <button class="back" onclick="goStep(1)">&larr; Voltar</button>
+            <button class="btn btn-accent btn-arrow" onclick="goStep(3)">Próximo: quantidade</button>
+          </div>
+        </div>
+
+        <!-- ============== STEP 3: quantity & timeline ============== -->
+        <div class="step-view" data-step="3">
+          <div class="step-meta">
+            <div>
+              <div class="step-num">Etapa 03 de 04</div>
+              <h2 class="step-title">Quantas peças,<br>e <span class="acc">pra quando?</span></h2>
+            </div>
+          </div>
+          <p class="step-sub" style="margin-bottom: 28px;">Lotes maiores ganham desconto amigável. Sempre passamos o prazo mais rápido com sinceridade.</p>
+
+          <div class="q-panel">
+            <div class="field">
+              <label>Quantas peças?</label>
+              <div class="qty-row">
+                <div class="qty-input">
+                  <button type="button" onclick="changeQty(-1)">&minus;</button>
+                  <input type="number" id="qty" value="1" min="1">
+                  <button type="button" onclick="changeQty(1)">+</button>
+                </div>
+                <span class="savings" id="savings" style="display: none;">
+                  <strong>Desconto por lote</strong> aplicado
+                </span>
+              </div>
+            </div>
+
+            <div class="field" style="margin-top: 28px;">
+              <label>Quando você precisa?</label>
+              <div class="finish-grid">
+                <button type="button" class="finish-card" data-time="standard" data-add="0" onclick="pickTime(this, 0, 'Standard')">
+                  <strong>Padrão</strong>
+                  <span>Pronto em 5 a 7 dias úteis</span>
+                  <span class="price">Incluso</span>
+                </button>
+                <button type="button" class="finish-card selected" data-time="quick" data-add="0" onclick="pickTime(this, 0, 'Quick')">
+                  <strong>Rápido</strong>
+                  <span>Pronto em 3 a 4 dias úteis</span>
+                  <span class="price">+15%</span>
+                </button>
+                <button type="button" class="finish-card" data-time="rush" data-add="0" onclick="pickTime(this, 0, 'Rush')">
+                  <strong>Expresso</strong>
+                  <span>Pronto em 1 a 2 dias úteis</span>
+                  <span class="price">+40%</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="field" style="margin-top: 28px;">
+              <label>Entrega</label>
+              <div class="finish-grid" style="grid-template-columns: 1fr 1fr;">
+                <button type="button" class="finish-card selected" onclick="this.parentElement.querySelectorAll('.finish-card').forEach(c=>c.classList.remove('selected'));this.classList.add('selected')">
+                  <strong>Envio para todo o Brasil</strong>
+                  <span>Com rastreio, 2 a 5 dias. Para qualquer canto do país.</span>
+                  <span class="price">A partir de R$ 25</span>
+                </button>
+                <button type="button" class="finish-card" onclick="this.parentElement.querySelectorAll('.finish-card').forEach(c=>c.classList.remove('selected'));this.classList.add('selected')">
+                  <strong>Retirada local</strong>
+                  <span>Gratuita. Na oficina, de terça a sábado.</span>
+                  <span class="price">Grátis</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-nav">
+            <button class="back" onclick="goStep(2)">&larr; Voltar</button>
+            <button class="btn btn-accent btn-arrow" onclick="goStep(4)">Próximo: contato</button>
+          </div>
+        </div>
+
+        <!-- ============== STEP 4: contact ============== -->
+        <div class="step-view" data-step="4">
+          <div class="step-meta">
+            <div>
+              <div class="step-num">Etapa 04 de 04</div>
+              <h2 class="step-title">Como podemos <span class="acc">falar com você?</span></h2>
+            </div>
+          </div>
+          <p class="step-sub" style="margin-bottom: 28px;">O Yoh lê pessoalmente e responde em até 24 horas, geralmente bem antes.</p>
+
+          <div class="q-panel">
+            <div class="field-row">
+              <div class="field">
+                <label>Seu nome</label>
+                <input type="text" placeholder="Nome e sobrenome">
+              </div>
+              <div class="field">
+                <label>E-mail</label>
+                <input type="email" placeholder="voce@exemplo.com">
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label>Telefone <span class="opt">— opcional</span></label>
+                <input type="text" placeholder="(11) 91234-5678">
+              </div>
+              <div class="field">
+                <label>Como prefere ser contatado</label>
+                <select>
+                  <option>E-mail</option>
+                  <option>Ligação</option>
+                  <option>WhatsApp</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Mais alguma coisa que devemos saber? <span class="opt">— opcional</span></label>
+              <textarea placeholder="Faixa de orçamento, prazo, contexto &mdash; o que ajudar a gente a entender."></textarea>
+            </div>
+
+            <div class="field" style="margin-top: 8px;">
+              <label style="display: flex; gap: 12px; align-items: flex-start; font-weight: 400; color: var(--ink-soft); cursor: pointer;">
+                <input type="checkbox" checked style="margin-top: 4px;">
+                <span style="font-size: 14px; line-height: 1.5;">Quero receber novidades sobre materiais e projetos finalizados de vez em quando. Sem spam &mdash; só conteúdo bom, no máximo uma vez por mês.</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="step-nav">
+            <button class="back" onclick="goStep(3)">&larr; Voltar</button>
+            <button class="btn btn-accent btn-arrow" onclick="submitQuote()">Enviar pedido de orçamento</button>
+          </div>
+        </div>
+
+        <!-- ============== SUCCESS ============== -->
+        <div class="step-view" data-step="5">
+          <div class="q-panel success-card">
+            <div class="check">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+            </div>
+            <h2>Recebemos &mdash; <span class="acc">obrigado!</span></h2>
+            <p>O Yoh já está com seu pedido e preparando um cafezinho pra olhar com calma. Espere uma resposta amigável no e-mail que você informou em até 24 horas.</p>
+
+            <div class="success-summary">
+              <div class="ref">Protocolo&nbsp;&middot;&nbsp;YM-2026-0742</div>
+              <ul>
+                <li><span>Projeto</span><strong id="sumProject">Impressão 3D personalizada</strong></li>
+                <li><span>Material</span><strong id="sumMat">PLA</strong></li>
+                <li><span>Acabamento</span><strong id="sumFinish">Como impresso</strong></li>
+                <li><span>Quantidade</span><strong id="sumQty">1</strong></li>
+                <li><span>Estimativa</span><strong id="sumEst">R$ 140&ndash;R$ 210</strong></li>
+              </ul>
+            </div>
+
+            <div class="ctas" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+              <a href="portfolio.html" class="btn btn-light">Ver o portfólio</a>
+              <a href="index.html" class="btn btn-accent btn-arrow">Voltar para o início</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== LIVE QUOTE SIDEBAR ============== -->
+      <aside class="quote-side" id="quoteSide">
+        <span class="live"><span class="pulse"></span> Estimativa ao vivo</span>
+        <div class="label">Seu orçamento até aqui</div>
+        <div class="total">
+          <span class="currency">R$</span><span id="lowEst">140</span>&ndash;<span id="highEst">210</span>
+        </div>
+        <div class="estim">O preço final é confirmado no orçamento real &mdash; geralmente fica bem perto desse valor.</div>
+
+        <hr>
+
+        <ul class="breakdown" id="breakdown">
+          <li><span>Material</span><strong id="bMat">PLA</strong></li>
+          <li><span>Acabamento</span><strong id="bFinish">Como impresso</strong></li>
+          <li><span>Quantidade</span><strong id="bQty">1 peça</strong></li>
+          <li><span>Prazo</span><strong id="bTime">Rápido (3 a 4 dias)</strong></li>
+          <li><span>Frete</span><strong>A partir de R$ 25</strong></li>
+        </ul>
+
+        <div class="turnaround">
+          <strong>Chegada estimada</strong>
+          <span id="arrival">Por volta de ter, 19/mai</span>
+        </div>
+
+        <p class="small">Os preços reais dependem da complexidade do arquivo, do preenchimento, do material de suporte e de outros fatores. Sempre te avisamos antes de imprimir.</p>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<!-- =================== FOOTER =================== -->
+<footer class="site">
+  <div class="inner">
+    <div>
+      <div class="footer-brand"><img src="assets/yoh-maker-logo-horiz.png" alt="Yoh Maker"></div>
+      <p class="blurb">Uma oficina pequena que faz objetos, protótipos e designs CAD impressos em 3D sob encomenda. Enviamos para todo o Brasil de uma oficina organizada, com dois gatos e uma cafeteira.</p>
+    </div>
+    <div>
+      <h5>Explorar</h5>
+      <ul>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="portfolio.html">Portfólio</a></li>
+        <li><a href="quote.html">Solicitar orçamento</a></li>
+        <li><a href="about.html">Sobre</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Serviços</h5>
+      <ul>
+        <li><a href="quote.html">Design CAD personalizado</a></li>
+        <li><a href="quote.html">Impressão FDM</a></li>
+        <li><a href="quote.html">Impressão em resina</a></li>
+        <li><a href="quote.html">Acabamento &amp; pintura</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Fique por perto</h5>
+      <ul>
+        <li><a href="mailto:contato@yohmaker.com.br">contato@yohmaker.com.br</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Pinterest</a></li>
+        <li><a href="#">TikTok</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="legal">
+    <span>&copy; 2026 Yoh Maker. Impresso à mão com carinho.</span>
+    <span>Horário da oficina: ter&ndash;sáb, 10h&ndash;18h</span>
+  </div>
+</footer>
+
+<script>
+  // ===== Quote state =====
+  const state = {
+    step: 1,
+    base: 140,           // base low estimate R$
+    matMult: 1,
+    matName: "PLA",
+    finishAdd: 0,
+    finishName: "Como impresso",
+    qty: 1,
+    timeMult: 1.15,
+    timeName: "Rápido (3 a 4 dias)"
+  };
+
+  // ===== Step navigation =====
+  function goStep(n) {
+    state.step = n;
+    document.querySelectorAll('.step-view').forEach(v => v.classList.remove('active'));
+    const next = document.querySelector(`.step-view[data-step="${n}"]`);
+    if (next) next.classList.add('active');
+
+    // stepper
+    document.querySelectorAll('#stepper .dot').forEach((d, i) => {
+      d.classList.remove('active', 'done');
+      if (i + 1 < n) d.classList.add('done');
+      else if (i + 1 === n) d.classList.add('active');
+    });
+
+    // hide sidebar at success
+    document.getElementById('quoteSide').style.display = n === 5 ? 'none' : '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ===== File upload mock =====
+  function addSampleFile(e) {
+    e.stopPropagation();
+    const list = document.getElementById('fileList');
+    if (list.children.length > 0) return;
+    list.innerHTML = `
+      <div class="file-row">
+        <div class="file-ico">stl</div>
+        <div class="file-info">
+          <strong>meu_modelo_v3.stl</strong>
+          <span>2,4 MB &middot; 18.420 triângulos &middot; pronto para orçamento</span>
+        </div>
+        <button class="file-rm" onclick="this.closest('.file-row').remove()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    `;
+  }
+  // drag visuals
+  const up = document.getElementById('uploader');
+  ['dragenter','dragover'].forEach(ev => up.addEventListener(ev, e => { e.preventDefault(); up.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(ev => up.addEventListener(ev, e => { e.preventDefault(); up.classList.remove('drag'); }));
+  up.addEventListener('drop', e => addSampleFile(e));
+  up.addEventListener('click', e => { if (!e.target.closest('button')) addSampleFile(e); });
+
+  // ===== Material picker =====
+  document.querySelectorAll('#matPicker .mat-pick').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#matPicker .mat-pick').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      state.matMult = parseFloat(btn.dataset.mult);
+      state.matName = btn.dataset.mat;
+      updateQuote();
+    });
+  });
+
+  // ===== Finish picker =====
+  document.querySelectorAll('#finishGrid .finish-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#finishGrid .finish-card').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      state.finishAdd = parseFloat(btn.dataset.add);
+      state.finishName = btn.dataset.finish;
+      updateQuote();
+    });
+  });
+
+  // ===== Quantity =====
+  function changeQty(delta) {
+    const input = document.getElementById('qty');
+    let v = parseInt(input.value, 10) + delta;
+    if (v < 1) v = 1;
+    input.value = v;
+    state.qty = v;
+    updateQuote();
+  }
+  document.getElementById('qty').addEventListener('input', e => {
+    state.qty = Math.max(1, parseInt(e.target.value || 1, 10));
+    updateQuote();
+  });
+
+  // ===== Time picker =====
+  function pickTime(el, _, name) {
+    el.parentElement.querySelectorAll('.finish-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    const map = { Standard: 1, Quick: 1.15, Rush: 1.4 };
+    state.timeMult = map[name];
+    state.timeName = name === 'Standard' ? 'Padrão (5 a 7 dias)' : name === 'Quick' ? 'Rápido (3 a 4 dias)' : 'Expresso (1 a 2 dias)';
+    updateQuote();
+  }
+
+  // ===== Quote calc =====
+  function updateQuote() {
+    // batch discount: 1 = 1.0x, 5 = 0.92x, 10 = 0.85x, 25 = 0.78x, 50+ = 0.7x
+    let batch = 1;
+    if (state.qty >= 50) batch = 0.7;
+    else if (state.qty >= 25) batch = 0.78;
+    else if (state.qty >= 10) batch = 0.85;
+    else if (state.qty >= 5) batch = 0.92;
+
+    const perPartLow = state.base * state.matMult * state.timeMult * batch + state.finishAdd;
+    const perPartHigh = perPartLow * 1.5;
+    const totalLow = Math.round(perPartLow * state.qty);
+    const totalHigh = Math.round(perPartHigh * state.qty);
+
+    document.getElementById('lowEst').textContent = totalLow;
+    document.getElementById('highEst').textContent = totalHigh;
+    document.getElementById('bMat').textContent = state.matName;
+    document.getElementById('bFinish').textContent = state.finishName;
+    document.getElementById('bQty').textContent = state.qty + (state.qty === 1 ? ' peça' : ' peças');
+    document.getElementById('bTime').textContent = state.timeName;
+
+    document.getElementById('savings').style.display = state.qty >= 5 ? 'inline-block' : 'none';
+
+    // arrival date
+    const days = state.timeName.includes('Padrão') ? 7 : state.timeName.includes('Expresso') ? 2 : 4;
+    const arrive = new Date(Date.now() + (days + 3) * 86400000);
+    const fmt = arrive.toLocaleDateString('pt-BR', { weekday: 'short', month: 'short', day: 'numeric' });
+    document.getElementById('arrival').textContent = 'Por volta de ' + fmt;
+  }
+  updateQuote();
+
+  // ===== Submit =====
+  function submitQuote() {
+    document.getElementById('sumMat').textContent = state.matName;
+    document.getElementById('sumFinish').textContent = state.finishName;
+    document.getElementById('sumQty').textContent = state.qty + (state.qty === 1 ? ' peça' : ' peças');
+    document.getElementById('sumEst').textContent = 'R$ ' + document.getElementById('lowEst').textContent + '-R$ ' + document.getElementById('highEst').textContent;
+    goStep(5);
+  }
+</script>
+
+</body>
+</html>

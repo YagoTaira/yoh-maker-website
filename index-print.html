@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yoh Maker — Impressão 3D personalizada e design CAD</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* =========================================================
+     Home-page specific styles
+     ========================================================= */
+
+  /* hero ---------------------------------- */
+  .hero {
+    padding-top: clamp(40px, 6vw, 80px);
+    padding-bottom: clamp(60px, 8vw, 120px);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(32px, 5vw, 80px);
+    align-items: center;
+  }
+  .hero h1 {
+    font-size: clamp(52px, 7vw, 108px);
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+  }
+  .hero h1 .acc {
+    color: var(--accent);
+    font-style: italic;
+  }
+  .hero .lede { margin-top: 28px; font-size: clamp(18px, 1.4vw, 22px); max-width: 52ch; }
+  .hero-ctas { margin-top: 36px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .hero-meta {
+    margin-top: 44px;
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+  .hero-meta .item { display: flex; align-items: center; gap: 10px; }
+  .hero-meta .item svg { color: var(--sage); }
+
+  /* hero collage on right */
+  .collage {
+    position: relative;
+    aspect-ratio: 5 / 6;
+    width: 100%;
+  }
+  .collage .ph {
+    position: absolute;
+    box-shadow: var(--shadow-md);
+    border-radius: var(--r-lg);
+  }
+  .collage .c1 { left: 0; top: 6%; width: 64%; aspect-ratio: 4 / 5; transform: rotate(-3deg); z-index: 2; }
+  .collage .c2 { right: 0; top: 0; width: 50%; aspect-ratio: 1 / 1; transform: rotate(4deg); z-index: 1; }
+  .collage .c3 { right: 4%; bottom: 0; width: 58%; aspect-ratio: 4 / 3; transform: rotate(-2deg); z-index: 3; box-shadow: var(--shadow-lg); }
+
+  /* floating sticker on hero */
+  .sticker {
+    position: absolute;
+    z-index: 4;
+    width: 132px; height: 132px;
+    border-radius: 50%;
+    background: var(--butter);
+    color: var(--ink);
+    display: grid; place-items: center;
+    text-align: center;
+    font-family: var(--serif);
+    font-size: 19px;
+    line-height: 1.1;
+    padding: 10px;
+    transform: rotate(-9deg);
+    box-shadow: var(--shadow-md);
+    left: -28px; bottom: 8%;
+  }
+  .sticker .small { font-family: var(--sans); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.7; display: block; margin-top: 6px; }
+
+  /* logos / trust strip */
+  .trust {
+    background: var(--bg-deep);
+    padding-block: 28px;
+    border-block: 1px solid var(--line);
+  }
+  .trust .inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding-inline: var(--gutter);
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    overflow: hidden;
+  }
+  .trust .label {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .trust .row-logos {
+    display: flex;
+    gap: 48px;
+    flex: 1;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .logo-ph {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--ink-soft);
+    opacity: 0.62;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  /* ---- services grid ---- */
+  .services {
+    padding-top: clamp(80px, 10vw, 140px);
+  }
+  .section-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: end;
+    margin-bottom: 56px;
+  }
+  .section-head .right { color: var(--ink-soft); max-width: 44ch; justify-self: end; }
+
+  .svc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .svc {
+    background: var(--paper);
+    border-radius: var(--r-lg);
+    padding: 28px 26px 26px;
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-height: 320px;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .svc:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+  .svc .icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: var(--bg);
+    display: grid; place-items: center;
+    color: var(--accent);
+  }
+  .svc h3 { font-size: 26px; }
+  .svc p { font-size: 15px; color: var(--ink-soft); }
+  .svc .meta {
+    margin-top: auto;
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    padding-top: 16px;
+    border-top: 1px dashed var(--line);
+  }
+  .svc.feat {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  .svc.feat h3, .svc.feat p { color: var(--bg); }
+  .svc.feat .icon { background: rgba(255,255,255,0.1); color: var(--butter); }
+  .svc.feat .meta { color: rgba(243,236,223,0.55); border-top-color: rgba(255,255,255,0.12); }
+
+  /* ---- how it works ---- */
+  .how {
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: var(--r-xl);
+    margin: 0 var(--gutter);
+    padding: clamp(56px, 7vw, 96px) clamp(40px, 6vw, 96px);
+    position: relative;
+    overflow: hidden;
+  }
+  .how::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(800px 400px at 90% -10%, rgba(227,93,58,0.18), transparent 60%),
+      radial-gradient(600px 400px at -10% 110%, rgba(58,90,69,0.20), transparent 60%);
+  }
+  .how > * { position: relative; z-index: 1; }
+  .how .eyebrow { color: var(--butter); }
+  .how .eyebrow::before { background: var(--butter); }
+  .how h2 { color: var(--bg); }
+  .how-steps {
+    margin-top: 64px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    counter-reset: step;
+  }
+  .step { counter-increment: step; }
+  .step .num {
+    font-family: var(--serif);
+    font-size: 64px;
+    line-height: 1;
+    color: var(--accent);
+    font-style: italic;
+    margin-bottom: 18px;
+  }
+  .step .num::before { content: counter(step, decimal-leading-zero); }
+  .step h4 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    color: var(--bg);
+    margin-bottom: 10px;
+  }
+  .step p { font-size: 14px; line-height: 1.55; color: rgba(243,236,223,0.7); }
+
+  /* ---- gallery ---- */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 16px;
+  }
+  .gallery-grid .item {
+    border-radius: var(--r-md);
+    overflow: hidden;
+    position: relative;
+  }
+  .gallery-grid .item .ph { width: 100%; height: 100%; border-radius: 0; }
+  .g-1 { grid-column: span 5; aspect-ratio: 4/5; }
+  .g-2 { grid-column: span 4; aspect-ratio: 1/1; }
+  .g-3 { grid-column: span 3; aspect-ratio: 3/4; }
+  .g-4 { grid-column: span 4; aspect-ratio: 4/3; }
+  .g-5 { grid-column: span 4; aspect-ratio: 4/3; }
+  .g-6 { grid-column: span 4; aspect-ratio: 4/3; }
+
+  /* ---- testimonial / story split ---- */
+  .story {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: stretch;
+  }
+  .story .left { display: flex; flex-direction: column; justify-content: center; gap: 24px; }
+  .story .quote {
+    font-family: var(--serif);
+    font-size: clamp(32px, 3.4vw, 48px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .story .quote .acc { color: var(--accent); font-style: italic; }
+  .story .quote::before {
+    content: "\201C";
+    font-size: 1em;
+    line-height: 0;
+    color: var(--accent);
+    margin-right: 4px;
+  }
+  .story .who { display: flex; align-items: center; gap: 16px; margin-top: 12px; }
+  .story .who .ava {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f0a890, #c44a2a);
+    display: grid; place-items: center;
+    color: white;
+    font-family: var(--serif);
+    font-size: 22px;
+  }
+  .story .who .meta { font-size: 14px; color: var(--ink-soft); line-height: 1.4; }
+  .story .who .meta strong { color: var(--ink); font-weight: 600; }
+  .story .right .ph { height: 100%; min-height: 420px; }
+
+  /* ---- materials strip ---- */
+  .materials {
+    background: var(--paper);
+    border-radius: var(--r-xl);
+    padding: clamp(48px, 6vw, 80px);
+    margin: 0 var(--gutter);
+    border: 1px solid var(--line);
+  }
+  .mat-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+    margin-top: 40px;
+  }
+  .mat {
+    border-radius: var(--r-md);
+    background: var(--bg);
+    padding: 18px;
+    text-align: center;
+    border: 1px solid var(--line);
+    transition: border-color .2s, transform .2s;
+    cursor: pointer;
+  }
+  .mat:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .mat .swatch {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    margin: 0 auto 14px;
+    box-shadow: inset 0 -8px 16px rgba(0,0,0,0.18), inset 0 4px 8px rgba(255,255,255,0.4);
+  }
+  .mat strong { display: block; font-size: 14px; color: var(--ink); font-weight: 600; }
+  .mat span { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ---- big CTA ---- */
+  .big-cta {
+    text-align: center;
+    padding-block: clamp(96px, 11vw, 160px);
+  }
+  .big-cta h2 {
+    font-size: clamp(56px, 8vw, 132px);
+    line-height: 0.95;
+  }
+  .big-cta h2 .acc { color: var(--accent); font-style: italic; }
+  .big-cta .lede { margin: 32px auto 0; text-align: center; font-size: 19px; }
+  .big-cta .ctas { margin-top: 40px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  /* ---- responsive ---- */
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .collage { max-width: 480px; margin-top: 16px; }
+    .section-head { grid-template-columns: 1fr; }
+    .section-head .right { justify-self: start; }
+    .svc-grid { grid-template-columns: repeat(2, 1fr); }
+    .how-steps { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+    .gallery-grid .item { grid-column: span 6 !important; aspect-ratio: 4/3 !important; }
+    .story { grid-template-columns: 1fr; gap: 32px; }
+    .mat-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .svc-grid { grid-template-columns: 1fr; }
+    .how-steps { grid-template-columns: 1fr; }
+    .gallery-grid .item { grid-column: span 12 !important; }
+    .mat-grid { grid-template-columns: repeat(2, 1fr); }
+    .sticker { width: 102px; height: 102px; font-size: 15px; left: -10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- =================== TOP NAV =================== -->
+<nav class="topnav">
+  <div class="inner">
+    <a href="index.html" class="brand">
+      <img src="assets/yoh-maker-logo-horiz.png" alt="Yoh Maker">
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Início</a>
+      <a href="portfolio.html">Portfólio</a>
+      <a href="quote.html">Como funciona</a>
+      <a href="about.html">Sobre</a>
+    </div>
+    <div class="nav-cta">
+      <a href="quote.html" class="btn btn-primary btn-arrow">Solicitar orçamento</a>
+    </div>
+  </div>
+</nav>
+
+<!-- =================== HERO =================== -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">Impressão 3D personalizada e design CAD</span>
+        <h1>Grandes ideias,<br>impressas em <span class="acc">pequena escala</span><br>&amp; só pra você.</h1>
+        <p class="lede">De um rascunho no guardanapo a uma peça pronta na sua porta. Projetamos, imprimimos e enviamos objetos 3D personalizados para todo o Brasil &mdash; sem pedido mínimo, sem termos técnicos, só ajuda amigável de um maker de verdade.</p>
+        <div class="hero-ctas">
+          <a href="quote.html" class="btn btn-accent btn-arrow">Pedir orçamento personalizado</a>
+          <a href="portfolio.html" class="btn btn-ghost">Ver o portfólio</a>
+        </div>
+        <div class="hero-meta">
+          <span class="item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+            Envio para todo o Brasil
+          </span>
+          <span class="item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+            Prazo de 3 a 7 dias
+          </span>
+          <span class="item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+            Sem pedido mínimo
+          </span>
+        </div>
+      </div>
+
+      <div class="hero-collage-wrap" style="position: relative;">
+        <div class="collage">
+          <div class="ph ph-coral c1">
+            <div class="ph-glyph">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2L2 7v10l10 5 10-5V7L12 2z"/><path d="M2 7l10 5 10-5"/><path d="M12 22V12"/></svg>
+            </div>
+            <span class="ph-label"><span class="ph-dot"></span> Dragão articulado · PLA</span>
+          </div>
+          <div class="ph ph-sage c2">
+            <div class="ph-glyph">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+            </div>
+            <span class="ph-label"><span class="ph-dot"></span> Vaso geométrico · PETG</span>
+          </div>
+          <div class="ph ph-cream c3">
+            <div class="ph-glyph">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="color: rgba(28,24,20,0.5);"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            </div>
+            <span class="ph-label"><span class="ph-dot"></span> Kit organizador de cabos</span>
+          </div>
+        </div>
+        <div class="sticker">
+          Orçamentos<br>em até 24h<span class="small">Prometido.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- =================== TRUST STRIP =================== -->
+<div class="trust">
+  <div class="inner">
+    <span class="label">Confiam na gente</span>
+    <div class="row-logos">
+      <span class="logo-ph">Estúdio Northbridge</span>
+      <span class="logo-ph">Cobblestone &amp; Cia.</span>
+      <span class="logo-ph">Maker&apos;s Hall</span>
+      <span class="logo-ph">Atlas Robótica</span>
+      <span class="logo-ph">Field Notes Press</span>
+    </div>
+  </div>
+</div>
+
+<!-- =================== SERVICES =================== -->
+<section class="services">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">O que fazemos</span>
+        <h2 style="margin-top: 18px;">Da ideia<br><span class="serif italic" style="color: var(--accent);">à peça pronta.</span></h2>
+      </div>
+      <p class="right">Somos uma oficina pequena, mas cuidamos do processo todo &mdash; assim você não precisa coordenar designer, impressor e acabamento. Traga uma foto, um rascunho ou só uma descrição.</p>
+    </div>
+
+    <div class="svc-grid">
+      <div class="svc feat">
+        <div class="icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v6M12 16v6M2 12h6M16 12h6M5 5l4 4M15 15l4 4M5 19l4-4M15 9l4-4"/></svg>
+        </div>
+        <h3>Design CAD personalizado</h3>
+        <p>Não tem o modelo? Sem problema. Conta o que você precisa e a gente desenha do zero &mdash; com revisões até ficar do jeito certo.</p>
+        <div class="meta"><span>Mais procurado</span><span>A partir de R$ 200</span></div>
+      </div>
+
+      <div class="svc">
+        <div class="icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+        </div>
+        <h3>Impressão FDM</h3>
+        <p>Peças resistentes e econômicas em PLA, PETG, ABS e TPU. Ótimas para protótipos, peças de reposição e objetos do dia a dia.</p>
+        <div class="meta"><span>Até 30&times;30&times;30 cm</span><span>A partir de R$ 40</span></div>
+      </div>
+
+      <div class="svc">
+        <div class="icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+        </div>
+        <h3>Resina (SLA)</h3>
+        <p>Detalhes nítidos para miniaturas, joias, modelos odontológicos e qualquer coisa em que o acabamento da superfície faça diferença.</p>
+        <div class="meta"><span>Camadas de 0,025 mm</span><span>A partir de R$ 75</span></div>
+      </div>
+
+      <div class="svc">
+        <div class="icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17l4-4 5 5 9-9"/><circle cx="7" cy="13" r="2"/><circle cx="12" cy="18" r="2"/></svg>
+        </div>
+        <h3>Acabamento &amp; pintura</h3>
+        <p>Lixadas, alisadas, com primer, pintadas, montadas. Saem da oficina com cara de produto de fábrica.</p>
+        <div class="meta"><span>Acabamento à mão</span><span>+R$ 50/peça</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== HOW IT WORKS =================== -->
+<section style="padding-block: 0;">
+  <div class="how">
+    <span class="eyebrow">Como funciona</span>
+    <h2 style="margin-top: 18px; max-width: 18ch;">Quatro passos simples da ideia até sua porta.</h2>
+
+    <div class="how-steps">
+      <div class="step">
+        <div class="num"></div>
+        <h4>Conte pra gente</h4>
+        <p>Envie um arquivo, compartilhe um rascunho ou descreva em palavras simples. A gente resolve o resto juntos.</p>
+      </div>
+      <div class="step">
+        <div class="num"></div>
+        <h4>Receba um orçamento amigável</h4>
+        <p>Em até 24 horas, uma pessoa de verdade responde com preço, prazo e indicação do material ideal.</p>
+      </div>
+      <div class="step">
+        <div class="num"></div>
+        <h4>Imprimimos e finalizamos</h4>
+        <p>Após sua aprovação, imprimimos, fazemos o acabamento à mão e conferimos a qualidade na nossa oficina &mdash; geralmente em até uma semana.</p>
+      </div>
+      <div class="step">
+        <div class="num"></div>
+        <h4>Enviamos pra você</h4>
+        <p>Embalado com cuidado, com código de rastreio, indo para qualquer canto do país. Mandamos fotos antes de despachar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== GALLERY =================== -->
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Impressões recentes</span>
+        <h2 style="margin-top: 18px;">Uma espiada na oficina.</h2>
+      </div>
+      <p class="right">Uma pequena seleção do que saiu da impressora ultimamente. Botões de reposição, peças de arte, protótipos e algum dragão de vez em quando. <a href="portfolio.html" style="color: var(--accent); text-decoration: underline; text-underline-offset: 4px;">Ver todos os 60+ &rarr;</a></p>
+    </div>
+
+    <div class="gallery-grid">
+      <div class="item g-1"><div class="ph ph-clay"><span class="ph-label"><span class="ph-dot"></span>Vaso topográfico</span></div></div>
+      <div class="item g-2"><div class="ph ph-charcoal"><span class="ph-label"><span class="ph-dot"></span>Protótipo de braço de drone</span></div></div>
+      <div class="item g-3"><div class="ph ph-butter"><span class="ph-label"><span class="ph-dot"></span>Jogo de xadrez completo</span></div></div>
+      <div class="item g-4"><div class="ph ph-mint"><span class="ph-label"><span class="ph-dot"></span>Cortadores de biscoito, lote de 24</span></div></div>
+      <div class="item g-5"><div class="ph ph-plum"><span class="ph-label"><span class="ph-dot"></span>Miniaturas de RPG</span></div></div>
+      <div class="item g-6"><div class="ph ph-sky"><span class="ph-label"><span class="ph-dot"></span>Suporte de celular personalizado</span></div></div>
+    </div>
+
+    <div style="margin-top: 40px; text-align: center;">
+      <a href="portfolio.html" class="btn btn-light btn-arrow">Ver portfólio completo</a>
+    </div>
+  </div>
+</section>
+
+<!-- =================== STORY / TESTIMONIAL =================== -->
+<section>
+  <div class="wrap">
+    <div class="story">
+      <div class="left">
+        <span class="eyebrow">Direto da oficina</span>
+        <p class="quote">Meus trabalhos favoritos são os que começam com <span class="acc">&ldquo;será que isso é possível?&rdquo;</span> &mdash; geralmente a resposta é sim, e a gente passa uma tarde super divertida descobrindo como.</p>
+        <div class="who">
+          <div class="ava">Y</div>
+          <div class="meta">
+            <strong>Yoh, fundador &amp; impressor-chefe</strong><br>
+            Toca a oficina e responde cada e-mail pessoalmente.
+          </div>
+        </div>
+        <div style="margin-top: 28px;">
+          <a href="about.html" class="btn btn-ghost btn-arrow">Saiba mais sobre a Yoh Maker</a>
+        </div>
+      </div>
+      <div class="right">
+        <div class="ph ph-coral" style="border-radius: var(--r-lg);">
+          <span class="ph-label"><span class="ph-dot"></span>Foto da oficina · espaço reservado</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== MATERIALS =================== -->
+<section style="padding-block: clamp(40px, 6vw, 80px);">
+  <div class="materials">
+    <div class="section-head" style="margin-bottom: 0;">
+      <div>
+        <span class="eyebrow">Materiais</span>
+        <h2 style="margin-top: 18px;">Doze materiais.<br>Centenas de acabamentos.</h2>
+      </div>
+      <p class="right">Não sabe qual escolher para o seu projeto? Conta pra gente para que vai usar e indicamos a melhor opção. Cores personalizadas sob encomenda.</p>
+    </div>
+
+    <div class="mat-grid">
+      <div class="mat"><div class="swatch" style="background: #e35d3a;"></div><strong>PLA Coral</strong><span>Fácil &middot; Uso interno</span></div>
+      <div class="mat"><div class="swatch" style="background: #1c1814;"></div><strong>PETG Preto</strong><span>Resistente &middot; Externo</span></div>
+      <div class="mat"><div class="swatch" style="background: #f3ecdf;"></div><strong>PLA Osso</strong><span>Fácil &middot; Uso interno</span></div>
+      <div class="mat"><div class="swatch" style="background: #3a5a45;"></div><strong>PETG Sálvia</strong><span>Resistente &middot; Externo</span></div>
+      <div class="mat"><div class="swatch" style="background: #f4cf6b;"></div><strong>PLA Manteiga</strong><span>Fácil &middot; Uso interno</span></div>
+      <div class="mat"><div class="swatch" style="background: linear-gradient(135deg, #b88aa6, #5b3a4f);"></div><strong>Resina Ameixa</strong><span>Detalhe &middot; Display</span></div>
+      <div class="mat"><div class="swatch" style="background: #d6d6d6; box-shadow: inset 0 -8px 16px rgba(0,0,0,0.25), inset 0 4px 8px rgba(255,255,255,0.6);"></div><strong>ABS Cinza</strong><span>Forte &middot; Funcional</span></div>
+      <div class="mat"><div class="swatch" style="background: #b9cdda;"></div><strong>PLA Céu</strong><span>Fácil &middot; Uso interno</span></div>
+      <div class="mat"><div class="swatch" style="background: #2a2a2a; background-image: radial-gradient(circle at 30% 30%, #555, #1a1a1a);"></div><strong>TPU Preto</strong><span>Flexível &middot; Aderente</span></div>
+      <div class="mat"><div class="swatch" style="background: #c9a880;"></div><strong>Madeira</strong><span>Especial</span></div>
+      <div class="mat"><div class="swatch" style="background: linear-gradient(135deg, #d8d8d8, #888);"></div><strong>Metal</strong><span>Especial</span></div>
+      <div class="mat"><div class="swatch" style="background: linear-gradient(135deg, #8effc1, #21d181); box-shadow: 0 0 16px rgba(33,209,129,0.4), inset 0 -8px 16px rgba(0,0,0,0.18);"></div><strong>PLA Glow</strong><span>Especial</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== BIG CTA =================== -->
+<section class="big-cta">
+  <div class="wrap">
+    <span class="eyebrow" style="justify-content: center;">Quando você quiser</span>
+    <h2 style="margin-top: 24px;">Tem uma ideia?<br>Vamos <span class="acc">imprimir.</span></h2>
+    <p class="lede">Manda uma descrição rapidinha &mdash; respondemos com um orçamento amigável, geralmente em menos de um dia. Sem compromisso, sem termos técnicos.</p>
+    <div class="ctas">
+      <a href="quote.html" class="btn btn-accent btn-arrow">Solicitar orçamento</a>
+      <a href="about.html" class="btn btn-ghost">Ou mande uma mensagem</a>
+    </div>
+  </div>
+</section>
+
+<!-- =================== FOOTER =================== -->
+<footer class="site">
+  <div class="inner">
+    <div>
+      <div class="footer-brand"><img src="assets/yoh-maker-logo-horiz.png" alt="Yoh Maker"></div>
+      <p class="blurb">Uma oficina pequena que faz objetos, protótipos e designs CAD impressos em 3D sob encomenda. Enviamos para todo o Brasil de uma oficina organizada, com dois gatos e uma cafeteira.</p>
+    </div>
+    <div>
+      <h5>Explorar</h5>
+      <ul>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="portfolio.html">Portfólio</a></li>
+        <li><a href="quote.html">Solicitar orçamento</a></li>
+        <li><a href="about.html">Sobre</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Serviços</h5>
+      <ul>
+        <li><a href="quote.html">Design CAD personalizado</a></li>
+        <li><a href="quote.html">Impressão FDM</a></li>
+        <li><a href="quote.html">Impressão em resina</a></li>
+        <li><a href="quote.html">Acabamento &amp; pintura</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Fique por perto</h5>
+      <ul>
+        <li><a href="mailto:contato@yohmaker.com.br">contato@yohmaker.com.br</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Pinterest</a></li>
+        <li><a href="#">TikTok</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="legal">
+    <span>&copy; 2026 Yoh Maker. Impresso à mão com carinho.</span>
+    <span>Horário da oficina: ter&ndash;sáb, 10h&ndash;18h</span>
+  </div>
+</footer>
+
+<style>
+  @page { size: A4; margin: 1cm; }
+  @media print {
+    html, body {
+      background: var(--bg) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+    .topnav { position: static !important; backdrop-filter: none !important; background: var(--bg) !important; border-bottom: 1px solid var(--line); }
+    .topnav .nav-cta, .topnav .nav-links { display: none; }
+    /* avoid clipping */
+    [class*="hero"], section, .wrap, footer, header { overflow: visible !important; }
+    /* break control */
+    section, .hero, footer.site, header { break-inside: avoid; page-break-inside: avoid; }
+    section, footer.site { break-before: page; page-break-before: always; }
+    .hero { break-before: auto; page-break-before: auto; }
+    h1, h2, h3 { break-after: avoid; page-break-after: avoid; }
+    /* tame oversized type for paper */
+    .hero h1 { font-size: 64px !important; }
+    /* drop sticky/fixed elements */
+    [style*="position: sticky"], [style*="position:sticky"], [style*="position: fixed"], [style*="position:fixed"] { position: static !important; }
+    a { color: inherit !important; text-decoration: none !important; }
+    /* hide any hover-only or decorative scroll markers */
+    .marquee, [class*="marquee"] { animation: none !important; }
+  }
+</style>
+<script>
+  (async () => {
+    try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch (e) {}
+    await new Promise(r => setTimeout(r, 600));
+    window.print();
+  })();
+</script>
+</body>
+</html>

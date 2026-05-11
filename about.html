@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sobre — Yoh Maker</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* about page styles */
+  .about-hero {
+    padding-top: clamp(48px, 6vw, 80px);
+    padding-bottom: clamp(48px, 6vw, 80px);
+  }
+  .about-hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(32px, 5vw, 80px);
+    align-items: center;
+  }
+  .about-hero h1 {
+    font-size: clamp(56px, 7.5vw, 110px);
+    line-height: 0.98;
+    margin-top: 18px;
+  }
+  .about-hero h1 .acc { color: var(--accent); font-style: italic; }
+  .about-hero .lede { margin-top: 28px; font-size: clamp(18px, 1.4vw, 21px); }
+  .about-hero .ph { aspect-ratio: 4 / 5; border-radius: var(--r-lg); }
+
+  /* fact strip */
+  .facts {
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: var(--r-xl);
+    margin: 0 var(--gutter);
+    padding: clamp(48px, 6vw, 72px);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .facts::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(600px 300px at 100% 0%, rgba(227,93,58,0.18), transparent 60%);
+  }
+  .fact { position: relative; z-index: 1; }
+  .fact .num {
+    font-family: var(--serif);
+    font-size: clamp(48px, 5vw, 76px);
+    line-height: 1;
+    color: var(--bg);
+  }
+  .fact .num .acc { color: var(--accent); font-style: italic; }
+  .fact .lab {
+    font-size: 13px;
+    color: rgba(243,236,223,0.6);
+    margin-top: 12px;
+    letter-spacing: 0.05em;
+    line-height: 1.4;
+  }
+
+  /* values / promise */
+  .values {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .val {
+    background: var(--paper);
+    border-radius: var(--r-lg);
+    padding: 32px 28px;
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .val .ico {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: var(--bg);
+    display: grid; place-items: center;
+    color: var(--accent);
+  }
+  .val h3 { font-size: 24px; margin: 0; }
+  .val p { color: var(--ink-soft); font-size: 15px; }
+
+  /* equipment / shop */
+  .shop-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+  .shop-split .right .ph { aspect-ratio: 4/5; border-radius: var(--r-lg); }
+  .shop-split h2 { margin-bottom: 24px; }
+  .shop-split h2 .acc { color: var(--accent); font-style: italic; }
+  .shop-split p { color: var(--ink-soft); margin-bottom: 16px; max-width: 50ch; }
+  .shop-list { list-style: none; padding: 0; margin: 24px 0 0; }
+  .shop-list li {
+    display: flex; gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px dashed var(--line);
+    align-items: baseline;
+  }
+  .shop-list li strong {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--accent);
+    min-width: 110px;
+  }
+  .shop-list li .det { font-size: 14px; color: var(--ink-soft); }
+
+  /* timeline */
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 7px; top: 12px; bottom: 12px;
+    width: 2px;
+    background: var(--line);
+  }
+  .timeline .row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 32px;
+    padding: 18px 0;
+    align-items: baseline;
+    position: relative;
+  }
+  .timeline .row::before {
+    content: "";
+    position: absolute;
+    left: -32px; top: 24px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 3px solid var(--accent);
+  }
+  .timeline .yr {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--accent);
+  }
+  .timeline .what strong { display: block; font-size: 18px; margin-bottom: 4px; }
+  .timeline .what span { color: var(--ink-soft); font-size: 15px; }
+
+  /* FAQ */
+  .faq-list { display: grid; gap: 8px; }
+  .faq-item {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    overflow: hidden;
+  }
+  .faq-q {
+    width: 100%;
+    text-align: left;
+    padding: 22px 26px;
+    background: transparent;
+    border: 0;
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--ink);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    letter-spacing: -0.01em;
+  }
+  .faq-q .ico {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--bg);
+    color: var(--accent);
+    display: grid; place-items: center;
+    font-family: var(--sans);
+    font-size: 16px;
+    flex-shrink: 0;
+    transition: transform .25s;
+  }
+  .faq-item.open .faq-q .ico { transform: rotate(45deg); }
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .35s ease;
+    color: var(--ink-soft);
+    padding: 0 26px;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .faq-item.open .faq-a { max-height: 320px; padding: 0 26px 22px; }
+
+  /* contact */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: stretch;
+  }
+  .contact-form {
+    background: var(--paper);
+    border-radius: var(--r-xl);
+    padding: 40px;
+    border: 1px solid var(--line);
+  }
+  .contact-form .field { margin-bottom: 18px; }
+  .contact-form input, .contact-form textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--bg);
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .contact-form textarea { min-height: 120px; resize: vertical; }
+  .contact-form input:focus, .contact-form textarea:focus { outline: none; border-color: var(--accent); background: var(--paper); }
+  .contact-form label { font-size: 13px; color: var(--ink); display: block; margin-bottom: 8px; font-weight: 500; }
+
+  .contact-info { display: flex; flex-direction: column; gap: 18px; }
+  .contact-info .block {
+    background: var(--paper);
+    border-radius: var(--r-lg);
+    padding: 28px;
+    border: 1px solid var(--line);
+  }
+  .contact-info .block h4 {
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 12px;
+    font-weight: 600;
+  }
+  .contact-info .block .big {
+    font-family: var(--serif);
+    font-size: 28px;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .contact-info .block .big a { color: var(--accent); font-style: italic; }
+  .contact-info .block p { color: var(--ink-soft); font-size: 15px; margin-top: 8px; line-height: 1.5; }
+
+  @media (max-width: 980px) {
+    .about-hero-grid, .shop-split, .contact-grid { grid-template-columns: 1fr; }
+    .facts { grid-template-columns: repeat(2, 1fr); }
+    .values { grid-template-columns: 1fr; }
+    .timeline .row { grid-template-columns: 80px 1fr; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- =================== TOP NAV =================== -->
+<nav class="topnav">
+  <div class="inner">
+    <a href="index.html" class="brand">
+      <img src="assets/yoh-maker-logo-horiz.png" alt="Yoh Maker">
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Início</a>
+      <a href="portfolio.html">Portfólio</a>
+      <a href="quote.html">Como funciona</a>
+      <a href="about.html" class="active">Sobre</a>
+    </div>
+    <div class="nav-cta">
+      <a href="quote.html" class="btn btn-primary btn-arrow">Solicitar orçamento</a>
+    </div>
+  </div>
+</nav>
+
+<!-- =================== HERO =================== -->
+<header class="about-hero">
+  <div class="wrap">
+    <div class="about-hero-grid">
+      <div>
+        <span class="eyebrow">Sobre a oficina</span>
+        <h1>Um maker.<br>Uma bancada.<br><span class="acc">Muito café.</span></h1>
+        <p class="lede">A Yoh Maker começou num quarto extra em 2023, com uma impressora e uma ideia teimosa &mdash; a de que encomendar um objeto 3D personalizado deveria parecer menos com mandar um contrato pra uma fábrica e mais com pedir ajuda pra um amigo.</p>
+        <p class="lede" style="margin-top: 16px;">Três anos depois é uma oficina organizada, com sete impressoras, cabine de pintura, dois gatos e a mesma forma amigável de trabalhar. Cada e-mail tem resposta de uma pessoa de verdade, cada peça é conferida à mão e cada projeto &mdash; seja uma peça única ou duzentas &mdash; recebe o mesmo cuidado.</p>
+      </div>
+      <div class="ph ph-coral">
+        <div class="ph-glyph">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg>
+        </div>
+        <span class="ph-label"><span class="ph-dot"></span>Retrato do Yoh na oficina</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- =================== FACTS STRIP =================== -->
+<section style="padding-block: 0 clamp(64px, 8vw, 120px);">
+  <div class="facts">
+    <div class="fact"><div class="num"><span class="acc">600</span>+</div><div class="lab">Peças personalizadas<br>entregues até hoje</div></div>
+    <div class="fact"><div class="num"><span class="acc">120</span></div><div class="lab">Clientes recorrentes<br>em todo o país</div></div>
+    <div class="fact"><div class="num"><span class="acc">07</span></div><div class="lab">Impressoras rodando<br>na oficina</div></div>
+    <div class="fact"><div class="num"><span class="acc">24</span>h</div><div class="lab">Tempo médio de resposta,<br>quase sempre menor</div></div>
+  </div>
+</section>
+
+<!-- =================== VALUES =================== -->
+<section style="padding-top: 0;">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">O que prometemos</span>
+        <h2 style="margin-top: 18px;">Três compromissos pequenos <span class="serif italic" style="color: var(--accent);">mas firmes.</span></h2>
+      </div>
+      <p class="right">Somos uma oficina pequena. O que a gente oferece e os grandes serviços online não conseguem é cuidado &mdash; então é nisso que apostamos.</p>
+    </div>
+
+    <div class="values">
+      <div class="val">
+        <div class="ico">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/><path d="M12 7v5l3 2"/></svg>
+        </div>
+        <h3>Resposta de verdade, em 24 horas</h3>
+        <p>Sem bots, sem e-mails automáticos. O Yoh lê pessoalmente cada pedido de orçamento e responde com atenção &mdash; geralmente em poucas horas.</p>
+      </div>
+      <div class="val">
+        <div class="ico">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <h3>Honestidade sobre o que não dá pra fazer</h3>
+        <p>Se o seu projeto for melhor pra injeção plástica, CNC ou outra oficina, a gente fala. Preferimos perder um trabalho a desperdiçar seu tempo e seu dinheiro.</p>
+      </div>
+      <div class="val">
+        <div class="ico">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l3 7 7 .8-5.2 4.7L18 22l-6-3.5L6 22l1.2-7.5L2 9.8 9 9z"/></svg>
+        </div>
+        <h3>Conferência de qualidade à mão</h3>
+        <p>Cada peça é inspecionada, rebarbada e testada antes de sair da bancada. Se algo não estiver certo, reimprimimos &mdash; por nossa conta &mdash; até ficar perfeito.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== EQUIPMENT / SHOP TOUR =================== -->
+<section>
+  <div class="wrap">
+    <div class="shop-split">
+      <div>
+        <span class="eyebrow">Na oficina</span>
+        <h2 style="margin-top: 18px;">Sete impressoras,<br>uma <span class="acc">obsessão</span> teimosa por qualidade.</h2>
+        <p>Trabalhamos de propósito com uma frota mista, pra usar a ferramenta certa em cada projeto &mdash; velocidade, detalhe, tamanho, material &mdash; em vez de forçar todo trabalho na mesma máquina.</p>
+        <ul class="shop-list">
+          <li><strong>FDM × 4</strong><span class="det">Bambu Lab X1C e P1S, para trabalhos rápidos e confiáveis em PLA / PETG / ABS.</span></li>
+          <li><strong>Resina × 2</strong><span class="det">Phrozen Sonic Mighty 8K para miniaturas, joias e modelos odontológicos de alta definição.</span></li>
+          <li><strong>Grande formato × 1</strong><span class="det">Voron modificada para peças de até 300&times;300&times;300 mm.</span></li>
+          <li><strong>Acabamento</strong><span class="det">Cabine de pintura, estação de lixamento, cura UV e armário de tintas.</span></li>
+          <li><strong>Software</strong><span class="det">Fusion 360, Blender, OrcaSlicer, Lychee &mdash; também desenhamos, não só imprimimos.</span></li>
+        </ul>
+      </div>
+      <div class="right">
+        <div class="ph ph-charcoal">
+          <div class="ph-glyph">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+          </div>
+          <span class="ph-label"><span class="ph-dot"></span>Foto da frota da oficina</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== TIMELINE =================== -->
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">A trajetória</span>
+        <h2 style="margin-top: 18px;">Do quarto extra<br>ao <span class="serif italic" style="color: var(--accent);">pequeno negócio.</span></h2>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="row"><div class="yr">2023</div><div class="what"><strong>Uma impressora num quarto extra</strong><span>Comecei a aceitar trabalhos paralelos para amigos &mdash; peças de reposição, pequenos objetos de arte e um ou outro adereço de cosplay.</span></div></div>
+      <div class="row"><div class="yr">2024</div><div class="what"><strong>Primeiro cliente comercial</strong><span>Uma cafeteria do bairro encomendou 24 cortadores de biscoito com a logo dela. A gente faz uma fornada por trimestre desde então.</span></div></div>
+      <div class="row"><div class="yr">Meados de 2024</div><div class="what"><strong>Mudança para a oficina</strong><span>Três impressoras, uma cabine de pintura de verdade e uma porta amarela. Os dois gatos vieram junto com o aluguel.</span></div></div>
+      <div class="row"><div class="yr">2025</div><div class="what"><strong>Serviço de design CAD</strong><span>A maioria dos clientes não tinha um arquivo 3D. Então começamos a desenhar a partir de rascunhos e fotos.</span></div></div>
+      <div class="row"><div class="yr">2026</div><div class="what"><strong>Envio para todo o Brasil</strong><span>O que era só retirada local agora vai pra qualquer estado do país. Mesmo processo amigável, agora com código de rastreio.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== FAQ =================== -->
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Dúvidas frequentes</span>
+        <h2 style="margin-top: 18px;">Algumas coisas <span class="serif italic" style="color: var(--accent);">que perguntam.</span></h2>
+      </div>
+      <p class="right">Não viu sua dúvida aqui? <a href="mailto:contato@yohmaker.com.br" style="color: var(--accent); text-decoration: underline;">Manda uma mensagem</a> &mdash; a gente adiciona.</p>
+    </div>
+
+    <div class="faq-list">
+      <div class="faq-item open">
+        <button class="faq-q">Não tenho um arquivo 3D. Vocês conseguem ajudar mesmo assim? <span class="ico">+</span></button>
+        <div class="faq-a">Com certeza &mdash; é uma das situações mais comuns. Mande um rascunho, uma foto do que você quer substituir ou só uma descrição em palavras simples. Nosso serviço de design CAD começa em R$ 200 e inclui revisões até ficar exatamente como você quer.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Quanto tempo costuma levar uma impressão? <span class="ico">+</span></button>
+        <div class="faq-a">A maioria dos projetos é despachada em 5 a 7 dias úteis após a aprovação. Há prazo rápido (3 a 4 dias) e expresso (1 a 2 dias) com taxa adicional. Peças maiores ou mais complexas podem levar mais &mdash; sempre passamos um prazo honesto antes de começar.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Qual é o tamanho máximo que vocês imprimem? <span class="ico">+</span></button>
+        <div class="faq-a">Uma peça única de até 300 &times; 300 &times; 300 mm na nossa impressora de grande formato. Objetos maiores podem ser impressos em partes e montados &mdash; já fizemos painéis de parede com mais de um metro de largura assim.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Os materiais são seguros para alimentos / uso externo / lava-louças? <span class="ico">+</span></button>
+        <div class="faq-a">Depende do material e do uso. PLA serve pra decoração interna; PETG aguenta uso externo e contato breve com alimentos. Para o que precisa resistir a calor, lava-louças ou sol prolongado, a gente recomenda o material certo conforme o uso que você descrever.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Posso ver uma amostra antes de imprimirem o lote inteiro? <span class="ico">+</span></button>
+        <div class="faq-a">Pode &mdash; em pedidos acima de 10 peças, recomendamos, e em geral imprimimos uma de graça primeiro. Mandamos fotos e enviamos a amostra pra sua aprovação antes de rodar o resto.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Para onde vocês enviam, e quanto custa? <span class="ico">+</span></button>
+        <div class="faq-a">Pra qualquer lugar do Brasil, com rastreio. O frete começa em R$ 25 para encomendas pequenas e é calculado por projeto &mdash; o valor exato aparece no seu orçamento. Retirada local na oficina é sempre gratuita.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== CONTACT =================== -->
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Diga olá</span>
+        <h2 style="margin-top: 18px;">Jeito mais rápido<br>de <span class="serif italic" style="color: var(--accent);">falar com a gente.</span></h2>
+      </div>
+      <p class="right">Precisa de orçamento? O <a href="quote.html" style="color: var(--accent); text-decoration: underline;">formulário de orçamento</a> é o mais rápido. Pra qualquer outra coisa &mdash; dúvidas, parcerias, só dar um oi &mdash; aqui funciona muito bem.</p>
+    </div>
+
+    <div class="contact-grid">
+      <form class="contact-form" onsubmit="event.preventDefault(); this.querySelector('.sent').style.display='block'; this.querySelectorAll('input,textarea,button').forEach(el=>el.disabled=true);">
+        <div class="field">
+          <label>Seu nome</label>
+          <input type="text" placeholder="Nome e sobrenome">
+        </div>
+        <div class="field">
+          <label>E-mail</label>
+          <input type="email" placeholder="voce@exemplo.com">
+        </div>
+        <div class="field">
+          <label>O que você tem em mente?</label>
+          <textarea placeholder="Qualquer coisa &mdash; uma dúvida, uma ideia de projeto, um oi."></textarea>
+        </div>
+        <button class="btn btn-accent btn-arrow" type="submit" style="width: 100%; justify-content: center;">Enviar mensagem</button>
+        <p class="sent" style="display: none; margin-top: 18px; padding: 14px; background: var(--sage-soft); color: var(--sage); border-radius: var(--r-md); text-align: center; font-size: 14px;">
+          Recebemos &mdash; respondemos em até 24h. Obrigado!
+        </p>
+      </form>
+
+      <div class="contact-info">
+        <div class="block">
+          <h4>E-mail</h4>
+          <div class="big"><a href="mailto:contato@yohmaker.com.br">contato@yohmaker.com.br</a></div>
+          <p>Geralmente respondemos em poucas horas durante o horário da oficina.</p>
+        </div>
+        <div class="block">
+          <h4>Oficina</h4>
+          <div class="big">Ter&ndash;Sáb, 10h&ndash;18h</div>
+          <p>Visitas com agendamento &mdash; adoramos mostrar as impressoras em ação. Manda uma mensagem antes.</p>
+        </div>
+        <div class="block">
+          <h4>Acompanhe a gente</h4>
+          <div class="big">
+            <a href="#">Instagram</a> &middot; <a href="#">TikTok</a> &middot; <a href="#">Pinterest</a>
+          </div>
+          <p>Time-lapses, peças finalizadas, bastidores &mdash; em geral alguns posts por semana.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== BIG CTA =================== -->
+<section class="big-cta" style="text-align: center; padding-block: clamp(80px, 10vw, 140px);">
+  <div class="wrap">
+    <h2 style="font-size: clamp(48px, 7vw, 110px); line-height: 0.98;">Tem uma ideia?<br>Vamos <span class="serif italic" style="color: var(--accent);">imprimir.</span></h2>
+    <p class="lede" style="margin: 32px auto 0; text-align: center;">Manda uma descrição rapidinha &mdash; respondemos com um orçamento amigável, geralmente em menos de um dia. Sem compromisso, sem termos técnicos.</p>
+    <div style="margin-top: 36px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+      <a href="quote.html" class="btn btn-accent btn-arrow">Solicitar orçamento</a>
+      <a href="portfolio.html" class="btn btn-ghost">Ver o portfólio</a>
+    </div>
+  </div>
+</section>
+
+<!-- =================== FOOTER =================== -->
+<footer class="site">
+  <div class="inner">
+    <div>
+      <div class="footer-brand"><img src="assets/yoh-maker-logo-horiz.png" alt="Yoh Maker"></div>
+      <p class="blurb">Uma oficina pequena que faz objetos, protótipos e designs CAD impressos em 3D sob encomenda. Enviamos para todo o Brasil de uma oficina organizada, com dois gatos e uma cafeteira.</p>
+    </div>
+    <div>
+      <h5>Explorar</h5>
+      <ul>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="portfolio.html">Portfólio</a></li>
+        <li><a href="quote.html">Solicitar orçamento</a></li>
+        <li><a href="about.html">Sobre</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Serviços</h5>
+      <ul>
+        <li><a href="quote.html">Design CAD personalizado</a></li>
+        <li><a href="quote.html">Impressão FDM</a></li>
+        <li><a href="quote.html">Impressão em resina</a></li>
+        <li><a href="quote.html">Acabamento &amp; pintura</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Fique por perto</h5>
+      <ul>
+        <li><a href="mailto:contato@yohmaker.com.br">contato@yohmaker.com.br</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Pinterest</a></li>
+        <li><a href="#">TikTok</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="legal">
+    <span>&copy; 2026 Yoh Maker. Impresso à mão com carinho.</span>
+    <span>Horário da oficina: ter&ndash;sáb, 10h&ndash;18h</span>
+  </div>
+</footer>
+
+<script>
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      q.parentElement.classList.toggle('open');
+    });
+  });
+</script>
+
+</body>
+</html>
