@@ -485,8 +485,21 @@
     <div class="nav-cta">
       <a href="mailto:contato@yohmaker.com.br" class="btn btn-ghost">Ou mande um e-mail</a>
     </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+      <svg class="ico-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      <svg class="ico-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
   </div>
 </nav>
+
+<!-- mobile nav drawer -->
+<div class="nav-drawer" id="navDrawer">
+  <a href="index.html">Início</a>
+  <a href="portfolio.html">Portfólio</a>
+  <a href="quote.html" class="active">Como funciona</a>
+  <a href="about.html">Sobre</a>
+  <a href="mailto:contato@yohmaker.com.br" class="btn btn-accent btn-arrow">Ou mande um e-mail</a>
+</div>
 
 <main class="quote-page">
   <div class="wrap">
@@ -1038,5 +1051,20 @@
   }
 </script>
 
+<script>
+  // mobile nav toggle
+  (function(){
+    const btn = document.getElementById('navToggle');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      document.body.classList.toggle('nav-open');
+      const expanded = document.body.classList.contains('nav-open');
+      btn.setAttribute('aria-expanded', expanded);
+    });
+    document.querySelectorAll('#navDrawer a').forEach(a => {
+      a.addEventListener('click', () => document.body.classList.remove('nav-open'));
+    });
+  })();
+</script>
 </body>
 </html>

@@ -338,13 +338,41 @@
     .gallery-grid .item { grid-column: span 6 !important; aspect-ratio: 4/3 !important; }
     .story { grid-template-columns: 1fr; gap: 32px; }
     .mat-grid { grid-template-columns: repeat(3, 1fr); }
+    .how { padding: clamp(40px, 8vw, 72px) clamp(24px, 5vw, 56px); margin: 0; border-radius: var(--r-lg); }
+    .materials { padding: clamp(32px, 6vw, 56px) clamp(24px, 5vw, 40px); margin: 0; border-radius: var(--r-lg); }
+  }
+  @media (max-width: 720px) {
+    .hero { padding-top: 24px; padding-bottom: 48px; }
+    .hero-meta { gap: 14px 22px; margin-top: 28px; }
+    .hero-ctas { margin-top: 28px; }
+    .hero-ctas .btn { flex: 1 1 auto; min-width: 0; justify-content: center; }
+    .collage { aspect-ratio: auto; max-width: none; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 32px; }
+    .collage .ph { position: static; width: 100% !important; transform: none !important; box-shadow: var(--shadow-sm) !important; aspect-ratio: 4/3 !important; }
+    .collage .c1 { grid-column: 1 / -1; aspect-ratio: 16/10 !important; }
+    .sticker { position: static; margin: 18px auto 0; transform: rotate(-6deg); }
+    .trust .inner { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .trust .row-logos { gap: 18px 28px; justify-content: flex-start; }
+    .logo-ph { font-size: 17px; }
   }
   @media (max-width: 560px) {
     .svc-grid { grid-template-columns: 1fr; }
-    .how-steps { grid-template-columns: 1fr; }
+    .svc { min-height: 0; padding: 24px 22px 22px; }
+    .svc h3 { font-size: 22px; }
+    .how-steps { grid-template-columns: 1fr; gap: 28px; margin-top: 40px; }
+    .step .num { font-size: 48px; margin-bottom: 12px; }
+    .step h4 { font-size: 24px; }
+    .gallery-grid { gap: 10px; }
     .gallery-grid .item { grid-column: span 12 !important; }
-    .mat-grid { grid-template-columns: repeat(2, 1fr); }
-    .sticker { width: 102px; height: 102px; font-size: 15px; left: -10px; }
+    .mat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .mat { padding: 14px 10px; }
+    .big-cta { padding-block: 64px; }
+    .big-cta h2 { font-size: clamp(44px, 13vw, 72px); }
+    .big-cta .lede { margin-top: 22px; font-size: 16px; }
+    .big-cta .ctas { margin-top: 28px; }
+    .big-cta .ctas .btn { flex: 1 1 100%; justify-content: center; }
+    .story .quote { font-size: clamp(24px, 6.5vw, 34px); }
+    .story .right .ph { min-height: 280px; }
+    .section-head { margin-bottom: 36px; }
   }
 </style>
 </head>
@@ -365,8 +393,21 @@
     <div class="nav-cta">
       <a href="quote.html" class="btn btn-primary btn-arrow">Solicitar orçamento</a>
     </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+      <svg class="ico-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      <svg class="ico-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
   </div>
 </nav>
+
+<!-- mobile nav drawer -->
+<div class="nav-drawer" id="navDrawer">
+  <a href="index.html" class="active">Início</a>
+  <a href="portfolio.html">Portfólio</a>
+  <a href="quote.html">Como funciona</a>
+  <a href="about.html">Sobre</a>
+  <a href="quote.html" class="btn btn-accent btn-arrow">Solicitar orçamento</a>
+</div>
 
 <!-- =================== HERO =================== -->
 <header class="hero">
@@ -656,5 +697,20 @@
   </div>
 </footer>
 
+<script>
+  // mobile nav toggle
+  (function(){
+    const btn = document.getElementById('navToggle');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      document.body.classList.toggle('nav-open');
+      const expanded = document.body.classList.contains('nav-open');
+      btn.setAttribute('aria-expanded', expanded);
+    });
+    document.querySelectorAll('#navDrawer a').forEach(a => {
+      a.addEventListener('click', () => document.body.classList.remove('nav-open'));
+    });
+  })();
+</script>
 </body>
 </html>
